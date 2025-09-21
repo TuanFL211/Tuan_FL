@@ -43,6 +43,16 @@ local RedzBetaToggle = Tab1:AddToggle({
     end
 })
 
+-- Thêm một số phần tử khác để tab không trống
+Tab1:AddSection({"Tính năng chính"})
+
+Tab1:AddButton({
+    Name = "Kiểm tra phiên bản",
+    Callback = function()
+        print("Redz Hub Version 1.0")
+    end
+})
+
 -- TAB TÙY CHỈNH
 local AntiBandToggle = Tab2:AddToggle({
     Name = "Chống band 100%",
@@ -50,6 +60,14 @@ local AntiBandToggle = Tab2:AddToggle({
     Callback = function(Value)
         -- Code chống band ở đây
         print("Chống band:", Value)
+        -- Ví dụ implementation
+        if Value then
+            game:GetService("Players").LocalPlayer.PlayerGui.ChildAdded:Connect(function(child)
+                if child.Name == "ErrorMessage" then
+                    child:Destroy()
+                end
+            end)
+        end
     end
 })
 
@@ -61,7 +79,10 @@ local SpeedSlider = Tab2:AddSlider({
     Default = 25,
     Callback = function(Value)
         -- Code thay đổi tốc độ
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = Value
+        end
     end
 })
 
@@ -71,24 +92,43 @@ local WallHackToggle = Tab2:AddToggle({
     Callback = function(Value)
         -- Code wall hack ở đây
         print("Wall hack:", Value)
+        if Value then
+            -- Kích hoạt wall hack
+            for _, part in pairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") and part.Transparency < 1 and part.Name ~= "HumanoidRootPart" then
+                    part.LocalTransparencyModifier = 0.5
+                end
+            end
+        else
+            -- Tắt wall hack
+            for _, part in pairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.LocalTransparencyModifier = 0
+                end
+            end
+        end
     end
 })
 
 -- Dropdown cho người chơi
-local players = {}
-for i, player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer then
-        table.insert(players, player.Name)
+local function updatePlayerList()
+    local players = {}
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            table.insert(players, player.Name)
+        end
     end
+    return players
 end
 
 local SelectedPlayer = nil
 local PlayerDropdown = Tab2:AddDropdown({
     Name = "Danh sách người chơi",
-    Options = players,
+    Options = updatePlayerList(),
     Default = "Chọn người chơi",
     Callback = function(Value)
         SelectedPlayer = Value
+        print("Đã chọn:", Value)
     end
 })
 
@@ -98,12 +138,18 @@ local TeleportToggle = Tab2:AddToggle({
     Default = false,
     Callback = function(Value)
         if Value and SelectedPlayer then
-            -- Code dịch chuyển
-            while Value do
-                wait()
-                local target = game.Players[SelectedPlayer].Character.HumanoidRootPart
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.CFrame
-            end
+            spawn(function()
+                while TeleportToggle.Value and SelectedPlayer do
+                    wait(0.1)
+                    local targetChar = game.Players[SelectedPlayer].Character
+                    local localChar = game.Players.LocalPlayer.Character
+                    
+                    if targetChar and targetChar:FindFirstChild("HumanoidRootPart") and
+                       localChar and localChar:FindFirstChild("HumanoidRootPart") then
+                        localChar.HumanoidRootPart.CFrame = targetChar.HumanoidRootPart.CFrame
+                    end
+                end
+            end)
         end
     end
 })
@@ -112,14 +158,21 @@ local TeleportToggle = Tab2:AddToggle({
 Tab2:AddButton({
     Name = "Làm mới danh sách",
     Callback = function()
-        players = {}
-        for i, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
-                table.insert(players, player.Name)
-            end
-        end
-        PlayerDropdown:Refresh(players)
+        PlayerDropdown:Refresh(updatePlayerList())
+        print("Đã làm mới danh sách người chơi")
     end
 })
 
+-- Chọn tab mặc định khi mở UI
 Window:SelectTab(Tab1)
+
+-- Thêm phần xử lý sự kiện để cập nhật danh sách người chơi tự động
+game.Players.PlayerAdded:Connect(function()
+    wait(1) -- Chờ một chút để player được thêm hoàn toàn
+    PlayerDropdown:Refresh(updatePlayerList())
+end)
+
+game.Players.PlayerRemoving:Connect(function()
+    wait(0.5) -- Chờ một chút để player được xóa hoàn toàn
+    PlayerDropdown:Refresh(updatePlayerList())
+end)
