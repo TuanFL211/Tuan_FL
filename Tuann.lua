@@ -2,7 +2,7 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2/refs/heads/main/UiREDzV2.lua"))()
 
 -- Cấu hình tính năng tự động lưu key
-local KEY_CACHE_FILE = "Tuan.txt"
+local KEY_CACHE_FILE = "thái_vũ_key_data.txt"
 local EXPIRATION_TIME = 12 * 60 * 60 -- 12 giờ tính bằng giây
 
 -- Kiểm tra xem có key đã lưu và còn hạn không
@@ -19,15 +19,15 @@ end
 -- Tạo Window chính
 local Window = MakeWindow({
     Hub = {
-        Title = "Tuan_FL_Script",
-        Animation = "Tuan_FL"
+        Title = "Thái Vũ",
+        Animation = "Thái Vũ Đẹp Zai"
     },
     Key = {
-        KeySystem = not is_key_valid_from_cache, -- Bật hoặc tắt hệ thống key tùy theo trạng thái lưu
-        Title = "GET KEY",
-        Description = "TUAN_FL_🤍",
-        KeyLink = "https://github.com/TuanFL211/Tuan_FL/blob/main/Tuan.txt",
-        Keys = {"Tuan_FL"},
+        KeySystem = not is_key_valid_from_cache,
+        Title = "Key System",
+        Description = "",
+        KeyLink = "https://link4m.com/lCSiF",
+        Keys = {"Thái Vũ 2012"},
         Notifi = {
             Notifications = true,
             CorrectKey = "Running the Script...",
@@ -57,7 +57,7 @@ end
 -- Hàm hiện thông báo xác nhận
 local function showConfirmation(scriptName, callback)
     local player = game.Players.LocalPlayer
-    local gui = player.PlayerGui
+    local gui = player:WaitForChild("PlayerGui")
     
     -- Tạo UI thông báo
     local frame = Instance.new("Frame")
@@ -130,16 +130,8 @@ end
 -- Tab Thông tin (tab đầu tiên)
 local InfoTab = MakeTab({Name = "Thông tin"})
 
--- Tab Nhóm Zalo
-local ZaloGroupTab = MakeTab({Name = "Nhóm Zalo", Parent = InfoTab})
-
-AddImage(ZaloGroupTab, {
-    Name = "Zalo Group Image",
-    Image = "https://lh6.googleusercontent.com/4wVA-b-nlyxryHW7nmr1VNMAgz9YkJk6e7zZp33FBDfkl9RuArykoWlOEMoTgLoTixc8K9Dl04yRG03sTr4LPMc",
-    Size = {200, 200}
-})
-
-AddButton(ZaloGroupTab, {
+-- Nhóm Zalo
+AddButton(InfoTab, {
     Name = "Tham gia nhóm Zalo",
     Callback = function()
         setclipboard("https://zalo.me/g/gxnivk802")
@@ -150,16 +142,8 @@ AddButton(ZaloGroupTab, {
     end
 })
 
--- Tab Nhóm Messenger
-local MessengerGroupTab = MakeTab({Name = "Nhóm Messenger", Parent = InfoTab})
-
-AddImage(MessengerGroupTab, {
-    Name = "Messenger Group Image",
-    Image = "https://lh6.googleusercontent.com/4wVA-b-nlyxryHW7nmr1VNMAgz9YkJk6e7zZp33FBDfkl9RuArykoWlOEMoTgLoTixc8K9Dl04yRG03sTr4LPMc",
-    Size = {200, 200}
-})
-
-AddButton(MessengerGroupTab, {
+-- Nhóm Messenger
+AddButton(InfoTab, {
     Name = "Tham gia nhóm Messenger",
     Callback = function()
         setclipboard("https://m.me/j/AbZwT1jUyrKvW2Bd/")
@@ -872,49 +856,110 @@ AddButton(ExtraTab, {
 })
 
 -- Tele người chơi
-local teleTab = MakeTab({Name = "Tele Người Chơi", Parent = ExtraTab})
-
--- Dropdown chọn người chơi
-local playersList = {}
-for _, player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer then
-        table.insert(playersList, player.Name)
-    end
-end
-
-AddDropdown(teleTab, {
-    Name = "Chọn người chơi",
-    Options = playersList,
-    Callback = function(selected)
-        _G.SelectedPlayer = selected
-    end
-})
-
--- Nút Reset danh sách người chơi
-AddButton(teleTab, {
-    Name = "Reset danh sách người chơi",
-    Callback = function()
-        playersList = {}
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
-                table.insert(playersList, player.Name)
-            end
-        end
-        -- Cập nhật dropdown ở đây (tùy thuộc vào UI Redz V2 có hỗ trợ không)
-    end
-})
-
--- Nút Tele đến người chơi
-AddButton(teleTab, {
+AddButton(ExtraTab, {
     Name = "Tele đến người chơi",
     Callback = function()
-        if _G.SelectedPlayer then
-            local target = game.Players[_G.SelectedPlayer]
-            if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-                local root = game.Players.LocalPlayer.Character.HumanoidRootPart
-                root.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0) -- Bay trên đầu 5 studs
+        local players = game.Players:GetPlayers()
+        local playerNames = {}
+        
+        for _, player in ipairs(players) do
+            if player ~= game.Players.LocalPlayer then
+                table.insert(playerNames, player.Name)
             end
         end
+        
+        -- Hiển thị danh sách người chơi
+        local player = game.Players.LocalPlayer
+        local gui = player:WaitForChild("PlayerGui")
+        
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0, 250, 0, 300)
+        frame.Position = UDim2.new(0.5, -125, 0.5, -150)
+        frame.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+        frame.BorderSizePixel = 0
+        frame.ZIndex = 10
+        
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = frame
+        
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0, 30)
+        title.Position = UDim2.new(0, 0, 0, 10)
+        title.BackgroundTransparency = 1
+        title.Text = "Chọn người chơi"
+        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.Font = Enum.Font.GothamBold
+        title.TextSize = 18
+        title.Parent = frame
+        
+        local scroll = Instance.new("ScrollingFrame")
+        scroll.Size = UDim2.new(1, -20, 1, -80)
+        scroll.Position = UDim2.new(0, 10, 0, 40)
+        scroll.BackgroundTransparency = 1
+        scroll.BorderSizePixel = 0
+        scroll.Parent = frame
+        
+        local listLayout = Instance.new("UIListLayout")
+        listLayout.Parent = scroll
+        
+        for i, name in ipairs(playerNames) do
+            local playerBtn = Instance.new("TextButton")
+            playerBtn.Size = UDim2.new(1, 0, 0, 30)
+            playerBtn.Position = UDim2.new(0, 0, 0, (i-1)*35)
+            playerBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+            playerBtn.BorderSizePixel = 0
+            playerBtn.Text = name
+            playerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            playerBtn.Font = Enum.Font.Gotham
+            playerBtn.TextSize = 14
+            playerBtn.Parent = scroll
+            
+            playerBtn.MouseButton1Click:Connect(function()
+                _G.SelectedPlayer = name
+                frame:Destroy()
+                
+                -- Tele đến người chơi
+                local target = game.Players[name]
+                if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                    local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+                    root.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
+                end
+            end)
+        end
+        
+        local resetBtn = Instance.new("TextButton")
+        resetBtn.Size = UDim2.new(0, 100, 0, 30)
+        resetBtn.Position = UDim2.new(0.5, -110, 1, -40)
+        resetBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+        resetBtn.BorderSizePixel = 0
+        resetBtn.Text = "Reset"
+        resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        resetBtn.Font = Enum.Font.GothamBold
+        resetBtn.TextSize = 14
+        resetBtn.Parent = frame
+        
+        local closeBtn = Instance.new("TextButton")
+        closeBtn.Size = UDim2.new(0, 100, 0, 30)
+        closeBtn.Position = UDim2.new(0.5, 10, 1, -40)
+        closeBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+        closeBtn.BorderSizePixel = 0
+        closeBtn.Text = "Đóng"
+        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtn.Font = Enum.Font.GothamBold
+        closeBtn.TextSize = 14
+        closeBtn.Parent = frame
+        
+        frame.Parent = gui
+        
+        resetBtn.MouseButton1Click:Connect(function()
+            _G.SelectedPlayer = nil
+            frame:Destroy()
+        end)
+        
+        closeBtn.MouseButton1Click:Connect(function()
+            frame:Destroy()
+        end)
     end
 })
 
