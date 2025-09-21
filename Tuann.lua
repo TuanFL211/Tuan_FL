@@ -24,22 +24,22 @@ local Window = MakeWindow({
     },
     Key = {
         KeySystem = not is_key_valid_from_cache,
-        Title = "Key System",
-        Description = "",
-        KeyLink = "https://link4m.com/lCSiF",
-        Keys = {"Thái Vũ 2012"},
+        Title = "GET KEY - TUANN",
+        Description = "GET KEY KHONGG CAN VUOT LINKK<33",
+        KeyLink = "Tuan_FL",
+        Keys = {"Tuan_FL"},
         Notifi = {
             Notifications = true,
-            CorrectKey = "Running the Script...",
-            IncorrectKey = "The key is incorrect",
+            CorrectKey = " Đang mở script ",
+            IncorrectKey = "KEY khongg đúng",
             CopyKeyLink = "Link đã copy vào clipboard!"
         }
     }
 })
 
--- Nút Minimize
+-- Nút Minimize với ảnh thực tế
 MinimizeButton({
-    Image = "http://www.roblox.com/asset/?id=ID_ANH_MOI",
+    Image = "http://www.roblox.com/asset/?id=7072717932", -- Thay ID bằng ID ảnh thực tế
     Size = {60, 60},
     Color = Color3.fromRGB(10, 10, 10),
     Corner = true,
@@ -129,6 +129,18 @@ end
 
 -- Tab Thông tin (tab đầu tiên)
 local InfoTab = MakeTab({Name = "Thông tin"})
+
+-- Thêm ảnh vào tab Thông tin
+AddParagraph(InfoTab, {
+    Name = "Tuan_FL",
+    Content = "CRE TUAN_FL!"
+})
+
+-- Hiển thị ảnh trong tab Thông tin
+AddImage(InfoTab, {
+    Name = "TUANN",
+    Link = "http://www.roblox.com/asset/?id=7072717932" -- Thay ID bằng ID ảnh thực tế
+})
 
 -- Nhóm Zalo
 AddButton(InfoTab, {
